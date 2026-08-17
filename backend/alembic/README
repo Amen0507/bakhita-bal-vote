@@ -1,0 +1,4 @@
+Alembic migration environment for Bal Vote.
+
+The database URL is sourced from `app.core.config.settings.database_url`, which
+in turn reads `DATABASE_URL` from the environment or the local `.env` file.

@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-ivory: #F4F1EA;
+  --color-espresso: #2C221E;
+  --color-espresso-light: #4A3C33;
+  --color-gold: #D4AF37;
+  --color-gold-light: #E8C547;
+  --color-gold-dark: #C5A059;
+  --color-gold-pale: #F5EDCC;
+  
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-ivory);
+  background-image: url('./assets/bg_texture.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  color: var(--color-espresso);
+  -webkit-font-smoothing: antialiased;
+}
+
+.bg-admin {
+  background-color: var(--color-espresso);
+  /* The texture is inherited from body, so we only need to change the background color */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #C5A059 0%, #E8C547 50%, #D4AF37 100%);
+}
+
+.gold-text {
+  background: linear-gradient(to right, #B08233 0%, #DFBA61 30%, #FDF3A9 50%, #DFBA61 70%, #B08233 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+}
+
+.gold-border {
+  border: 1px solid #D4AF37;
+}
+
+.luxury-card {
+  background: rgba(253, 252, 250, 0.95);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 1rem;
+  box-shadow: 
+    0 10px 30px rgba(44, 34, 30, 0.05),
+    inset 0 0 20px rgba(212, 175, 55, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.btn-gold {
+  background: linear-gradient(to bottom, #EDD691 0%, #D4AF37 50%, #BA9524 100%);
+  color: #2C221E;
+  font-weight: 600;
+  padding: 0.875rem 2rem;
+  border-radius: 9999px; /* Pill shape */
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 
+    0 4px 15px rgba(212, 175, 55, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-sans);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(212, 175, 55, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  background: linear-gradient(to bottom, #F5E5AD 0%, #DFBA61 50%, #CCAA3B 100%);
+}
+
+.ornament-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.ornament-line::before,
+.ornament-line::after {
+  content: '';
+  height: 1px;
+  width: 50px;
+  background: linear-gradient(to right, transparent, #D4AF37, transparent);
+}
+
+.ornament-icon {
+  width: 24px;
+  height: 12px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 12" fill="%23D4AF37"><path d="M12 0L14 5L19 2L15 7L24 6L16 9L21 12L13 10L12 12L11 10L3 12L8 9L0 6L9 7L5 2L10 5L12 0Z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.mask-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, #E8C547, #C5A059);
+  box-shadow: 0 5px 15px rgba(44, 34, 30, 0.2);
+}
+
+.mask-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.ivory-card {
+  background: rgba(253, 252, 250, 0.92);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px rgba(44, 34, 30, 0.06);
+}
+
+.input-elegant {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(197, 160, 89, 0.45);
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--color-espresso);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-elegant:focus {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.16);
+}
+
+.btn-ghost {
+  border: 1px solid rgba(197, 160, 89, 0.55);
+  border-radius: 9999px;
+  padding: 0.75rem 1rem;
+  color: var(--color-gold-dark);
+  background: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.btn-ghost:hover { background: var(--color-gold-pale); }
+
+.btn-danger { color: #b42318; background: #fef3f2; border: 1px solid #fecdca; }
+
+.toast-success, .toast-error {
+  padding: 0.8rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.toast-success { color: #166534; background: #f0fdf4; border: 1px solid #bbf7d0; }
+.toast-error { color: #b42318; background: #fef2f2; border: 1px solid #fecaca; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up { animation: fade-up 0.45s ease both; }
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+.animate-shimmer { animation: shimmer 1.6s ease-in-out infinite; }
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
