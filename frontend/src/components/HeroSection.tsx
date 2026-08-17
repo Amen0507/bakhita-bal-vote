@@ -23,7 +23,7 @@ export default function HeroSection() {
             <div className="ornament-icon"></div>
           </div>
 
-          <p className="text-sm sm:text-base md:text-xl font-semibold tracking-widest mb-10 text-[#4A3C33] uppercase text-center max-w-2xl px-4 drop-shadow-sm">
+          <p className="texture-copy text-sm sm:text-base md:text-xl font-semibold tracking-widest mb-10 text-[#4A3C33] uppercase text-center max-w-2xl px-4">
             19 Août 2026 – Queen Fafa Palace Calavi
           </p>
           

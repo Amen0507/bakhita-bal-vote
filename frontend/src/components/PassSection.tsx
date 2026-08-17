@@ -7,7 +7,7 @@ export default function PassSection() {
       {/* Title */}
       <div className="flex items-center justify-center w-full mb-6">
         <div className="ornament-line opacity-70 hidden sm:flex w-24"></div>
-        <h2 className="text-4xl sm:text-5xl font-bold tracking-widest text-[#B08233] mx-6" style={{ fontFamily: 'var(--font-serif)' }}>
+        <h2 className="texture-gold-text text-4xl sm:text-5xl font-bold tracking-widest text-[#B08233] mx-6" style={{ fontFamily: 'var(--font-serif)' }}>
           PASS
         </h2>
         <div className="ornament-line opacity-70 hidden sm:flex w-24"></div>
@@ -60,7 +60,7 @@ export default function PassSection() {
 
       <div className="flex items-center justify-center space-x-4">
         <img src={maskSmall} alt="Mask" className="w-8 h-6 object-contain" />
-        <p className="text-[#4A3C33] text-sm sm:text-base tracking-widest uppercase font-semibold">
+        <p className="texture-copy text-[#4A3C33] text-sm sm:text-base tracking-widest uppercase font-semibold">
           Dress code : Élégant et Masqué
         </p>
         <img src={maskSmall} alt="Mask" className="w-8 h-6 object-contain" />
