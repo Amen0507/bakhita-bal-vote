@@ -4,6 +4,7 @@ import { Crown, Star, Users, Lock } from 'lucide-react'
 import PageIntro from '../components/PageIntro'
 
 interface ResultEntry { candidate_id?: string; duo_id?: string; votes: number }
+interface Participant { name: string; photoUrls: string[] }
 
 interface Results {
   roi: ResultEntry[]
@@ -11,41 +12,57 @@ interface Results {
   duo: ResultEntry[]
 }
 
-function PodiumCard({ rank, entry, type, name }: { rank: number; entry: ResultEntry; type: 'roi' | 'reine' | 'duo'; name?: string }) {
+function PodiumCard({ rank, entry, type, participant }: { rank: number; entry: ResultEntry; type: 'roi' | 'reine' | 'duo'; participant?: Participant }) {
   const medals = ['🥇', '🥈', '🥉']
   const medal = medals[rank - 1] || `#${rank}`
-
   const icons = { roi: '👑', reine: '⭐', duo: '💫' }
+  const photoUrls = participant?.photoUrls || []
 
   return (
     <div
-      className="luxury-card p-4 rounded-xl flex items-center gap-3 animate-fade-up"
+      className="group relative min-h-28 overflow-hidden rounded-2xl border animate-fade-up"
       style={{
         animationDelay: `${rank * 0.1}s`,
         background: rank === 1
-          ? 'linear-gradient(135deg, rgba(197,160,89,0.15) 0%, rgba(212,175,55,0.25) 100%)'
-          : 'rgba(255,255,255,0.7)',
-        border: rank === 1 ? '1.5px solid var(--color-gold)' : '1px solid #E8E0CC',
-        boxShadow: rank === 1 ? '0 4px 20px rgba(212,175,55,0.2)' : '0 2px 8px rgba(44,34,30,0.05)',
+          ? 'linear-gradient(135deg, #2C221E 0%, #4A3C33 100%)'
+          : 'rgba(253,252,250,0.92)',
+        borderColor: rank === 1 ? '#D4AF37' : 'rgba(212,175,55,0.35)',
+        boxShadow: rank === 1 ? '0 10px 26px rgba(44,34,30,0.28)' : '0 5px 16px rgba(44,34,30,0.09)',
       }}
     >
-      <div className="text-2xl flex-shrink-0">{medal}</div>
-      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-base"
-        style={{ background: 'linear-gradient(135deg, #C5A059, #D4AF37)' }}>
-        {icons[type]}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-semibold truncate" style={{ color: 'var(--color-espresso)' }}>
-          {name || 'Participant du Bal'}
+      <div className="flex min-h-28">
+        <div className="relative w-28 flex-shrink-0 overflow-hidden sm:w-36">
+          {photoUrls.length > 0 ? (
+            <div className={`grid h-full ${photoUrls.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+              {photoUrls.slice(0, 2).map((photoUrl, index) => (
+                <img key={index} src={photoUrl} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              ))}
+            </div>
+          ) : (
+            <div className="flex h-full items-center justify-center bg-gradient-to-br from-[#C5A059] to-[#D4AF37] text-3xl">
+              {icons[type]}
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#2C221E]/25" />
         </div>
-        <div
-          className="font-bold text-xl"
-          style={{ fontFamily: 'var(--font-serif)', color: rank === 1 ? 'var(--color-gold-dark)' : 'var(--color-espresso)' }}
-        >
-          {entry.votes}
-          <span className="text-xs font-normal ml-1" style={{ color: 'var(--color-espresso-light)', opacity: 0.6 }}>
-            votes
-          </span>
+        <div className="flex min-w-0 flex-1 items-center gap-3 px-4 py-4 sm:px-5">
+          <div className="text-2xl leading-none sm:text-3xl">{medal}</div>
+          <div className="min-w-0 flex-1">
+            <p className="mb-1 text-[0.6rem] font-bold tracking-[0.2em] uppercase" style={{ color: rank === 1 ? '#E8C547' : '#B08233' }}>
+              {rank === 1 ? 'En tête du classement' : `Position ${rank}`}
+            </p>
+            <h3 className="truncate text-lg font-bold sm:text-xl" style={{ fontFamily: 'var(--font-serif)', color: rank === 1 ? '#FFFFFF' : '#2C221E' }}>
+              {participant?.name || 'Participant du Bal'}
+            </h3>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold leading-none sm:text-3xl" style={{ fontFamily: 'var(--font-serif)', color: rank === 1 ? '#F5E5AD' : '#B08233' }}>
+              {entry.votes}
+            </div>
+            <div className="mt-1 text-[0.6rem] font-semibold tracking-widest uppercase" style={{ color: rank === 1 ? 'rgba(255,255,255,0.6)' : '#4A3C33' }}>
+              votes
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -57,17 +74,22 @@ export default function Results() {
   const [notPublished, setNotPublished] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-  const [participantNames, setParticipantNames] = useState<Record<string, string>>({})
+  const [participants, setParticipants] = useState<Record<string, Participant>>({})
 
   useEffect(() => {
     Promise.all([getVoteResults(), getPublicCandidates(), getPublicDuos()])
       .then(([res, candidates, duos]) => {
         setResults(res)
-        setParticipantNames({
-          ...Object.fromEntries(candidates.map(candidate => [candidate.id, `${candidate.first_name} ${candidate.last_name}`])),
+        setParticipants({
+          ...Object.fromEntries(candidates.map(candidate => [candidate.id, {
+            name: `${candidate.first_name} ${candidate.last_name}`,
+            photoUrls: candidate.photo_url ? [candidate.photo_url] : [],
+          }])),
           ...Object.fromEntries(duos.map(duo => [
-            duo.id,
-            duo.duo_name || `${duo.cavalier_first_name} ${duo.cavalier_last_name} & ${duo.cavaliere_first_name} ${duo.cavaliere_last_name}`,
+            duo.id, {
+              name: duo.duo_name || `${duo.cavalier_first_name} ${duo.cavalier_last_name} & ${duo.cavaliere_first_name} ${duo.cavaliere_last_name}`,
+              photoUrls: [duo.cavalier_photo_url, duo.cavaliere_photo_url].filter((photoUrl): photoUrl is string => Boolean(photoUrl)),
+            },
           ])),
         })
       })
@@ -145,15 +167,15 @@ export default function Results() {
         description="Découvrez les favoris élus par les invités du Bal Masqué 2026."
       />
 
-      <div className="space-y-8 mb-4">
+      <div className="space-y-10 mb-4">
         {sections.map(({ key, label, icon: Icon, data }) => (
           <div key={key}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-7 h-7 rounded-full flex items-center justify-center"
+            <div className="flex items-center gap-3 mb-4 px-1">
+              <div className="w-9 h-9 rounded-full flex items-center justify-center shadow-md"
                 style={{ background: 'linear-gradient(135deg, #C5A059, #D4AF37)' }}>
                 <Icon size={14} style={{ color: '#2C221E' }} />
               </div>
-              <span className="font-semibold" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-espresso)' }}>
+              <span className="text-xl font-semibold" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-espresso)' }}>
                 {label}
               </span>
             </div>
@@ -162,9 +184,9 @@ export default function Results() {
                 Aucun vote enregistré
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {data.slice(0, 3).map((entry, i) => (
-                  <PodiumCard key={i} rank={i + 1} entry={entry} type={key} name={participantNames[entry.candidate_id || entry.duo_id || '']} />
+                  <PodiumCard key={i} rank={i + 1} entry={entry} type={key} participant={participants[entry.candidate_id || entry.duo_id || '']} />
                 ))}
               </div>
             )}
