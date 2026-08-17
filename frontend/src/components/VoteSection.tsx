@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import maskWhiteGold from '../assets/mask_white_gold.png'
-import maskBlackGold from '../assets/mask_black_gold.png'
-import maskSilver from '../assets/mask_silver.png'
-import maskBlack from '../assets/mask_black.png'
+import maskWhiteGold from '../assets/mask_white_gold.webp'
+import maskBlackGold from '../assets/mask_black_gold.webp'
+import maskSilver from '../assets/mask_silver.webp'
+import maskBlack from '../assets/mask_black.webp'
 
 export default function VoteSection() {
   const masks = [

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import heroMask from '../assets/hero_mask.png'
+import heroMask from '../assets/hero_mask.webp'
 
 export default function HeroSection() {
   return (

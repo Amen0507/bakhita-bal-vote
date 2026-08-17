@@ -21,7 +21,7 @@
 body {
   font-family: var(--font-sans);
   background-color: var(--color-ivory);
-  background-image: url('./assets/bg_texture.png');
+  background-image: url('./assets/bg_texture.webp');
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;

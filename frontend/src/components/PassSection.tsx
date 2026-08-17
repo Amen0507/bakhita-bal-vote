@@ -1,4 +1,4 @@
-import maskSmall from '../assets/hero_mask.png'
+import maskSmall from '../assets/hero_mask.webp'
 
 export default function PassSection() {
   return (
