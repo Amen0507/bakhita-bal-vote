@@ -21,7 +21,9 @@
 body {
   font-family: var(--font-sans);
   background-color: var(--color-ivory);
-  background-image: url('./assets/bg_texture.webp');
+  background-image:
+    linear-gradient(rgba(244, 241, 234, 0.76), rgba(244, 241, 234, 0.76)),
+    url('./assets/bg_texture.webp');
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;

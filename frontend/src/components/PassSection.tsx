@@ -18,9 +18,6 @@ export default function PassSection() {
           <p className="text-[#C5A059] font-bold tracking-widest text-lg sm:text-xl uppercase">Billetterie Ouverte !</p>
           <p className="text-[#4A3C33] text-sm sm:text-base tracking-widest uppercase mt-1">Les masques sont offerts</p>
         </div>
-        <p className="text-[#B08233] font-bold tracking-widest text-base sm:text-lg uppercase">
-          ⚠️ Places très limitées !
-        </p>
       </div>
 
       <div className="luxury-card w-full max-w-4xl p-6 sm:p-10 rounded-2xl mb-8">
