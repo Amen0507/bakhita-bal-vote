@@ -13,6 +13,7 @@ export default function Header() {
     { name: 'Inscription', path: '/register' },
     { name: 'Voter', path: '/vote' },
     { name: 'Résultats', path: '/results' },
+    { name: 'Administration', path: '/admin' },
   ]
 
   return (
