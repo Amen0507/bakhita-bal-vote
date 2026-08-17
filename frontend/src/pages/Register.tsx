@@ -86,6 +86,12 @@ export default function Register() {
     { key: 'DUO', label: '💫 Duo' },
   ] as const
 
+  const registrationOpen = settings && (
+    (mode === 'ROI' && settings.roi_inscriptions_open) ||
+    (mode === 'REINE' && settings.reine_inscriptions_open) ||
+    (mode === 'DUO' && settings.duo_inscriptions_open)
+  )
+
   return (
     <div className="min-h-screen w-full flex flex-col items-center pt-32 pb-16 px-4">
       <PageIntro
@@ -99,26 +105,10 @@ export default function Register() {
           <div className="h-8 bg-[#D4AF37]/20 rounded w-3/4"></div>
           <div className="h-4 bg-[#D4AF37]/10 rounded w-1/2"></div>
         </div>
-      ) : settings && (
-        (mode === 'ROI' && !settings.roi_inscriptions_open) ||
-        (mode === 'REINE' && !settings.reine_inscriptions_open) ||
-        (mode === 'DUO' && !settings.duo_inscriptions_open)
-      ) ? (
-        <div className="luxury-card w-full max-w-lg p-10 flex flex-col items-center text-center gap-4">
-          <Lock size={48} className="text-[#C5A059]" />
-          <h3 className="text-2xl font-bold text-[#2C221E]" style={{ fontFamily: 'var(--font-serif)' }}>
-            Inscriptions fermées
-          </h3>
-          <p className="text-[#4A3C33]">
-            Les inscriptions pour la catégorie <strong>{mode === 'ROI' ? 'Roi' : mode === 'REINE' ? 'Reine' : 'Duo'}</strong> sont actuellement fermées.
-          </p>
-          <p className="text-sm text-[#B08233]">Vous pouvez sélectionner une autre catégorie.</p>
-        </div>
       ) : (
-
       <div className="luxury-card w-full max-w-lg p-8 bg-white/70 space-y-6">
 
-        {/* Mode selector */}
+        {/* Mode selector — toujours visible */}
         <div className="grid grid-cols-3 gap-2">
           {modes.map(({ key, label }) => (
             <button
@@ -135,6 +125,16 @@ export default function Register() {
           ))}
         </div>
 
+        {!registrationOpen && (
+          <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#FDF8EC] border border-[#D4AF37]/40 text-center animate-fade-up">
+            <Lock size={24} className="text-[#C5A059]" />
+            <p className="text-sm text-[#4A3C33]">
+              Les inscriptions pour la catégorie <strong>{mode === 'ROI' ? 'Roi' : mode === 'REINE' ? 'Reine' : 'Duo'}</strong> sont actuellement fermées.
+            </p>
+            <p className="text-xs text-[#B08233]">Vous pouvez sélectionner une autre catégorie.</p>
+          </div>
+        )}
+
         {/* Feedback */}
         {success && (
           <div className="flex items-center gap-3 p-4 rounded-xl bg-green-50 border border-green-200 text-green-800 animate-fade-up">
@@ -149,7 +149,7 @@ export default function Register() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {registrationOpen && <form onSubmit={handleSubmit} className="space-y-4">
           {mode !== 'DUO' ? (
             <>
               <div>
@@ -237,7 +237,7 @@ export default function Register() {
           >
             {loading ? 'Envoi en cours...' : '✨ Soumettre ma candidature'}
           </button>
-        </form>
+        </form>}
 
         <p className="text-center text-xs text-[#4A3C33]/50">
           Places très limitées — candidatures soumises à validation
