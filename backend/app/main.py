@@ -15,7 +15,19 @@ from app.api.v1.admin_votes import router as admin_votes_router
 from app.api.v1.agent_vote_codes import router as agent_vote_codes_router
 from app.core.config import settings
 
-app = FastAPI(title=settings.project_name)
+from contextlib import asynccontextmanager
+
+from app.initial_data import initialize_data
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Run startup tasks before serving requests."""
+    initialize_data()
+    yield
+
+
+app = FastAPI(title=settings.project_name, lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
