@@ -141,17 +141,33 @@ export default function AdminDashboard() {
   }
 
   const handleDeleteCandidate = async (id: string) => {
+    if (!window.confirm('Supprimer ce candidat ? Cette action est irréversible.')) return
+
     setDeletingId(id)
-    await deleteAdminCandidate(id)
-    setCandidates(c => c.filter(x => x.id !== id))
-    setDeletingId(null)
+    try {
+      await deleteAdminCandidate(id)
+      setCandidates(c => c.filter(x => x.id !== id))
+      showMsg('Candidat supprimé ✓')
+    } catch {
+      showMsg('Impossible de supprimer ce candidat', false)
+    } finally {
+      setDeletingId(null)
+    }
   }
 
   const handleDeleteDuo = async (id: string) => {
+    if (!window.confirm('Supprimer ce duo ? Cette action est irréversible.')) return
+
     setDeletingId(id)
-    await deleteAdminDuo(id)
-    setDuos(d => d.filter(x => x.id !== id))
-    setDeletingId(null)
+    try {
+      await deleteAdminDuo(id)
+      setDuos(d => d.filter(x => x.id !== id))
+      showMsg('Duo supprimé ✓')
+    } catch {
+      showMsg('Impossible de supprimer ce duo', false)
+    } finally {
+      setDeletingId(null)
+    }
   }
 
   const handleAddCandidate = async (e: React.FormEvent) => {

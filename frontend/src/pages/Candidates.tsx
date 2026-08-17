@@ -62,7 +62,7 @@ export default function Candidates() {
       {/* Content */}
       <div className="w-full max-w-5xl">
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map(i => (
               <div key={i} className="h-48 rounded-xl bg-white/50 border border-[#D4AF37]/30 animate-pulse" />
             ))}
@@ -74,19 +74,26 @@ export default function Candidates() {
                 <div className="col-span-full"><EmptyState /></div>
               ) : (
                 (tab === 'ROI' ? rois : reines).map((c, i) => (
-                  <div key={c.id} className="luxury-card relative flex flex-col items-center p-8 bg-white/70 text-center animate-fade-up overflow-hidden" style={{ animationDelay: `${i * 0.1}s` }}>
-                    <div className="w-32 h-32 rounded-full border-[6px] border-white/80 flex items-center justify-center text-5xl font-bold bg-gradient-to-br from-[#D4AF37] to-[#C5A059] text-white shadow-xl mb-6 overflow-hidden relative z-10">
+                  <article key={c.id} className="group relative overflow-hidden rounded-2xl border border-[#D4AF37]/50 bg-[#2C221E] shadow-xl animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
+                    <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-[#D4AF37] to-[#5C4316]">
                       {c.photo_url ? (
-                        <img src={c.photo_url} alt={`${c.first_name} ${c.last_name}`} className="w-full h-full object-cover" />
-                      ) : c.first_name[0]}
+                        <img src={c.photo_url} alt={`${c.first_name} ${c.last_name}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      ) : (
+                        <span className="flex h-full items-center justify-center font-serif text-8xl font-bold text-white/90">{c.first_name[0]}</span>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#1D1512] via-[#1D1512]/15 to-transparent" />
+                      <div className="absolute left-4 top-4 rounded-full border border-[#F5EDCC]/70 bg-[#2C221E]/75 px-3 py-1 text-[0.65rem] font-bold tracking-[0.2em] text-[#F5EDCC] backdrop-blur-sm">
+                        {tab === 'ROI' ? 'ROI' : 'REINE'} · {String(i + 1).padStart(2, '0')}
+                      </div>
+                      <div className="absolute inset-x-0 bottom-0 p-6 text-center text-white">
+                        <p className="mb-2 text-[0.65rem] font-semibold tracking-[0.26em] text-[#E8C547] uppercase">Candidat officiel</p>
+                        <h3 className="text-3xl font-bold leading-tight drop-shadow-lg" style={{ fontFamily: 'var(--font-serif)' }}>
+                          {c.first_name} {c.last_name}
+                        </h3>
+                      </div>
                     </div>
-                    <h3 className="text-2xl font-bold text-[#2C221E] mb-2" style={{ fontFamily: 'var(--font-serif)' }}>
-                      {c.first_name} {c.last_name}
-                    </h3>
-                    <div className="text-xs font-semibold tracking-widest uppercase text-[#B08233] mb-4">
-                      Candidat N° {i + 1}
-                    </div>
-                  </div>
+                    <div className="h-1 bg-gradient-to-r from-[#8C6718] via-[#F5E5AD] to-[#8C6718]" />
+                  </article>
                 ))
               )
             ) : (
@@ -94,26 +101,26 @@ export default function Candidates() {
                 <div className="col-span-full"><EmptyState /></div>
               ) : (
                 duos.map((d, i) => (
-                  <div key={d.id} className="luxury-card flex flex-col items-center p-8 bg-white/70 text-center animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
-                    {d.duo_name && (
-                      <h3 className="text-xl font-bold text-[#2C221E] mb-6" style={{ fontFamily: 'var(--font-serif)' }}>
-                        {d.duo_name}
-                      </h3>
-                    )}
-                    <div className="relative flex justify-center items-center w-full mb-8 mt-2">
-                      <div className="w-28 h-28 rounded-full border-[5px] border-white shadow-lg overflow-hidden bg-gradient-to-br from-[#D4AF37] to-[#C5A059] z-10 -mr-6 flex items-center justify-center text-white text-4xl font-bold">
-                        {d.cavalier_photo_url ? <img src={d.cavalier_photo_url} alt={d.cavalier_first_name} className="w-full h-full object-cover" /> : d.cavalier_first_name[0]}
+                  <article key={d.id} className="group relative overflow-hidden rounded-2xl border border-[#D4AF37]/50 bg-[#2C221E] shadow-xl animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
+                    <div className="relative grid aspect-[4/5] grid-cols-2 overflow-hidden bg-[#2C221E]">
+                      <div className="relative overflow-hidden bg-gradient-to-br from-[#D4AF37] to-[#5C4316]">
+                        {d.cavalier_photo_url ? <img src={d.cavalier_photo_url} alt={`${d.cavalier_first_name} ${d.cavalier_last_name}`} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" /> : <span className="flex h-full items-center justify-center font-serif text-6xl font-bold text-white/90">{d.cavalier_first_name[0]}</span>}
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#1D1512]/90 to-transparent px-3 pb-4 pt-10 text-center text-sm font-semibold text-white" style={{ fontFamily: 'var(--font-serif)' }}>{d.cavalier_first_name}</div>
                       </div>
-                      <div className="w-28 h-28 rounded-full border-[5px] border-white shadow-lg overflow-hidden bg-gradient-to-br from-[#C5A059] to-[#E8C547] z-20 flex items-center justify-center text-[#2C221E] text-4xl font-bold">
-                        {d.cavaliere_photo_url ? <img src={d.cavaliere_photo_url} alt={d.cavaliere_first_name} className="w-full h-full object-cover" /> : d.cavaliere_first_name[0]}
+                      <div className="relative overflow-hidden bg-gradient-to-br from-[#C5A059] to-[#E8C547]">
+                        {d.cavaliere_photo_url ? <img src={d.cavaliere_photo_url} alt={`${d.cavaliere_first_name} ${d.cavaliere_last_name}`} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" /> : <span className="flex h-full items-center justify-center font-serif text-6xl font-bold text-white/90">{d.cavaliere_first_name[0]}</span>}
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#1D1512]/90 to-transparent px-3 pb-4 pt-10 text-center text-sm font-semibold text-white" style={{ fontFamily: 'var(--font-serif)' }}>{d.cavaliere_first_name}</div>
                       </div>
                     </div>
-                    <div className="flex flex-col items-center w-full">
-                      <div className="text-lg font-bold text-[#2C221E]" style={{ fontFamily: 'var(--font-serif)' }}>{d.cavalier_first_name} {d.cavalier_last_name}</div>
-                      <div className="text-[#D4AF37] text-xl leading-none my-2 font-serif italic">&</div>
-                      <div className="text-lg font-bold text-[#2C221E]" style={{ fontFamily: 'var(--font-serif)' }}>{d.cavaliere_first_name} {d.cavaliere_last_name}</div>
+                    <div className="absolute left-4 top-4 rounded-full border border-[#F5EDCC]/70 bg-[#2C221E]/75 px-3 py-1 text-[0.65rem] font-bold tracking-[0.2em] text-[#F5EDCC] backdrop-blur-sm">
+                      DUO · {String(i + 1).padStart(2, '0')}
                     </div>
-                  </div>
+                    <div className="absolute inset-x-0 bottom-0 bg-[#1D1512]/90 px-5 py-4 text-center text-white backdrop-blur-sm">
+                      <p className="mb-1 text-[0.6rem] font-semibold tracking-[0.26em] text-[#E8C547] uppercase">Duo officiel</p>
+                      <h3 className="text-xl font-bold leading-tight" style={{ fontFamily: 'var(--font-serif)' }}>{d.duo_name || `${d.cavalier_first_name} & ${d.cavaliere_first_name}`}</h3>
+                    </div>
+                    <div className="h-1 bg-gradient-to-r from-[#8C6718] via-[#F5E5AD] to-[#8C6718]" />
+                  </article>
                 ))
               )
             )}
