@@ -1,9 +1,7 @@
 import axios from "axios";
 import type {
   Candidate,
-  CandidateCreate,
   Duo,
-  DuoCreate,
   SystemSettings,
   BallotCreate,
   VoteCodeIssue,
