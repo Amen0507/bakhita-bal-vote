@@ -148,8 +148,8 @@ export default function AdminDashboard() {
       await deleteAdminCandidate(id)
       setCandidates(c => c.filter(x => x.id !== id))
       showMsg('Candidat supprimé ✓')
-    } catch {
-      showMsg('Impossible de supprimer ce candidat', false)
+    } catch (err: any) {
+      showMsg(err?.response?.data?.detail || 'Impossible de supprimer ce candidat', false)
     } finally {
       setDeletingId(null)
     }
@@ -163,8 +163,8 @@ export default function AdminDashboard() {
       await deleteAdminDuo(id)
       setDuos(d => d.filter(x => x.id !== id))
       showMsg('Duo supprimé ✓')
-    } catch {
-      showMsg('Impossible de supprimer ce duo', false)
+    } catch (err: any) {
+      showMsg(err?.response?.data?.detail || 'Impossible de supprimer ce duo', false)
     } finally {
       setDeletingId(null)
     }

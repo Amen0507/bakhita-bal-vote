@@ -3,10 +3,10 @@
 import uuid
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models import Duo
+from app.models import Duo, Vote
 from app.schemas.duo import DuoCreate, DuoUpdate
 from app.services.settings_service import get_settings
 
@@ -62,6 +62,13 @@ def update_duo(db: Session, duo: Duo, duo_in: DuoUpdate) -> Duo:
 
 def delete_duo(db: Session, duo: Duo) -> None:
     """Delete an existing duo."""
+
+    vote_count = db.scalar(select(func.count(Vote.id)).where(Vote.duo_id == duo.id))
+    if vote_count:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Ce duo a déjà reçu des votes et ne peut plus être supprimé.",
+        )
 
     db.delete(duo)
     db.commit()

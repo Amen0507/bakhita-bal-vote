@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models import Candidate, CandidateCategory
+from app.models import Candidate, CandidateCategory, Vote
 from app.schemas.candidate import CandidateCreate, CandidateUpdate
 from app.services.settings_service import get_settings
 
@@ -88,6 +88,13 @@ def update_candidate(
 
 def delete_candidate(db: Session, candidate: Candidate) -> None:
     """Delete an existing candidate."""
+
+    vote_count = db.scalar(select(func.count(Vote.id)).where(Vote.candidate_id == candidate.id))
+    if vote_count:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Ce candidat a déjà reçu des votes et ne peut plus être supprimé.",
+        )
 
     db.delete(candidate)
     db.commit()
