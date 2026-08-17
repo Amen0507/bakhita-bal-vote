@@ -51,14 +51,18 @@ export const getPublicDuos = async (): Promise<Duo[]> => {
 };
 
 export const registerCandidate = async (
-  candidate: CandidateCreate
+  formData: FormData
 ): Promise<Candidate> => {
-  const response = await api.post<Candidate>("/public/candidates", candidate);
+  const response = await api.post<Candidate>("/public/candidates", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return response.data;
 };
 
-export const registerDuo = async (duo: DuoCreate): Promise<Duo> => {
-  const response = await api.post<Duo>("/public/duos", duo);
+export const registerDuo = async (formData: FormData): Promise<Duo> => {
+  const response = await api.post<Duo>("/public/duos", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return response.data;
 };
 
@@ -132,6 +136,33 @@ export const getAdminVoteResults = async () => {
 
 export const issueVoteCode = async (): Promise<VoteCodeIssue> => {
   const response = await api.post<VoteCodeIssue>('/agent/vote-codes/');
+  return response.data;
+};
+
+export const uploadAdminCandidatePhoto = async (id: string, file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await api.post(`/admin/candidates/${id}/photo`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+};
+
+export const uploadAdminDuoCavalierPhoto = async (id: string, file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await api.post(`/admin/duos/${id}/photo/cavalier`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+};
+
+export const uploadAdminDuoCavalierePhoto = async (id: string, file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await api.post(`/admin/duos/${id}/photo/cavaliere`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return response.data;
 };
 

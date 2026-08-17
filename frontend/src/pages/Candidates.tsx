@@ -74,13 +74,13 @@ export default function Candidates() {
                 <div className="col-span-full"><EmptyState /></div>
               ) : (
                 (tab === 'ROI' ? rois : reines).map((c, i) => (
-                  <div key={c.id} className="luxury-card flex flex-col items-center p-8 bg-white/70 text-center animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
-                    <div className="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold bg-gradient-to-br from-[#D4AF37] to-[#C5A059] text-white shadow-inner mb-4 overflow-hidden">
+                  <div key={c.id} className="luxury-card relative flex flex-col items-center p-8 bg-white/70 text-center animate-fade-up overflow-hidden" style={{ animationDelay: `${i * 0.1}s` }}>
+                    <div className="w-32 h-32 rounded-full border-[6px] border-white/80 flex items-center justify-center text-5xl font-bold bg-gradient-to-br from-[#D4AF37] to-[#C5A059] text-white shadow-xl mb-6 overflow-hidden relative z-10">
                       {c.photo_url ? (
                         <img src={c.photo_url} alt={`${c.first_name} ${c.last_name}`} className="w-full h-full object-cover" />
                       ) : c.first_name[0]}
                     </div>
-                    <h3 className="text-xl font-bold text-[#2C221E] mb-1" style={{ fontFamily: 'var(--font-serif)' }}>
+                    <h3 className="text-2xl font-bold text-[#2C221E] mb-2" style={{ fontFamily: 'var(--font-serif)' }}>
                       {c.first_name} {c.last_name}
                     </h3>
                     <div className="text-xs font-semibold tracking-widest uppercase text-[#B08233] mb-4">
@@ -100,20 +100,18 @@ export default function Candidates() {
                         {d.duo_name}
                       </h3>
                     )}
-                    <div className="flex items-center justify-center gap-4 w-full">
-                      <div className="flex flex-col items-center">
-                        <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold bg-gradient-to-br from-[#D4AF37] to-[#C5A059] text-white shadow-inner mb-2 overflow-hidden">
-                          {d.cavalier_photo_url ? <img src={d.cavalier_photo_url} alt={d.cavalier_first_name} className="w-full h-full object-cover" /> : d.cavalier_first_name[0]}
-                        </div>
-                        <div className="text-sm font-semibold text-[#2C221E]">{d.cavalier_first_name}</div>
+                    <div className="relative flex justify-center items-center w-full mb-8 mt-2">
+                      <div className="w-28 h-28 rounded-full border-[5px] border-white shadow-lg overflow-hidden bg-gradient-to-br from-[#D4AF37] to-[#C5A059] z-10 -mr-6 flex items-center justify-center text-white text-4xl font-bold">
+                        {d.cavalier_photo_url ? <img src={d.cavalier_photo_url} alt={d.cavalier_first_name} className="w-full h-full object-cover" /> : d.cavalier_first_name[0]}
                       </div>
-                      <span className="text-[#D4AF37] text-2xl">❤</span>
-                      <div className="flex flex-col items-center">
-                        <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold bg-gradient-to-br from-[#D4AF37] to-[#C5A059] text-white shadow-inner mb-2 overflow-hidden">
-                          {d.cavaliere_photo_url ? <img src={d.cavaliere_photo_url} alt={d.cavaliere_first_name} className="w-full h-full object-cover" /> : d.cavaliere_first_name[0]}
-                        </div>
-                        <div className="text-sm font-semibold text-[#2C221E]">{d.cavaliere_first_name}</div>
+                      <div className="w-28 h-28 rounded-full border-[5px] border-white shadow-lg overflow-hidden bg-gradient-to-br from-[#C5A059] to-[#E8C547] z-20 flex items-center justify-center text-[#2C221E] text-4xl font-bold">
+                        {d.cavaliere_photo_url ? <img src={d.cavaliere_photo_url} alt={d.cavaliere_first_name} className="w-full h-full object-cover" /> : d.cavaliere_first_name[0]}
                       </div>
+                    </div>
+                    <div className="flex flex-col items-center w-full">
+                      <div className="text-lg font-bold text-[#2C221E]" style={{ fontFamily: 'var(--font-serif)' }}>{d.cavalier_first_name} {d.cavalier_last_name}</div>
+                      <div className="text-[#D4AF37] text-xl leading-none my-2 font-serif italic">&</div>
+                      <div className="text-lg font-bold text-[#2C221E]" style={{ fontFamily: 'var(--font-serif)' }}>{d.cavaliere_first_name} {d.cavaliere_last_name}</div>
                     </div>
                   </div>
                 ))

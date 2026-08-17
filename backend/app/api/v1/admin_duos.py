@@ -3,11 +3,12 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status, UploadFile, File
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_admin
 from app.core.database import get_db
+from app.core.storage import upload_photo
 from app.schemas.duo import DuoCreate, DuoResponse, DuoUpdate
 from app.services.duo_service import create_duo, delete_duo, get_duo, get_duos, update_duo
 
@@ -59,3 +60,49 @@ def remove_duo(duo_id: uuid.UUID, db: Annotated[Session, Depends(get_db)]) -> Re
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Duo not found")
     delete_duo(db, duo)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/{duo_id}/photo/cavalier", response_model=DuoResponse)
+def upload_cavalier_photo(
+    duo_id: uuid.UUID,
+    file: UploadFile,
+    db: Annotated[Session, Depends(get_db)]
+) -> DuoResponse:
+    """Upload a photo for the cavalier of a duo."""
+
+    duo = get_duo(db, duo_id)
+    if duo is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Duo not found")
+        
+    file_bytes = file.file.read()
+    if not file_bytes:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Empty file")
+        
+    url = upload_photo(file_bytes, folder="bal_vote/duos/cavalier")
+    if not url:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to upload photo")
+        
+    return update_duo(db, duo, DuoUpdate(cavalier_photo_url=url))
+
+
+@router.post("/{duo_id}/photo/cavaliere", response_model=DuoResponse)
+def upload_cavaliere_photo(
+    duo_id: uuid.UUID,
+    file: UploadFile,
+    db: Annotated[Session, Depends(get_db)]
+) -> DuoResponse:
+    """Upload a photo for the cavaliere of a duo."""
+
+    duo = get_duo(db, duo_id)
+    if duo is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Duo not found")
+        
+    file_bytes = file.file.read()
+    if not file_bytes:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Empty file")
+        
+    url = upload_photo(file_bytes, folder="bal_vote/duos/cavaliere")
+    if not url:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to upload photo")
+        
+    return update_duo(db, duo, DuoUpdate(cavaliere_photo_url=url))

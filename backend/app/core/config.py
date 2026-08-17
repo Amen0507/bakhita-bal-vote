@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
     first_superuser: str = "admin"
     first_superuser_password: str | None = None
+    cloudinary_url: str | None = None
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

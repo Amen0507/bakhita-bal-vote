@@ -4,12 +4,13 @@ import {
   getSettings, updateSettings,
   getAdminCandidates, createAdminCandidate, deleteAdminCandidate,
   getAdminDuos, createAdminDuo, deleteAdminDuo,
-  getAdminVoteResults, issueVoteCode
+  getAdminVoteResults, issueVoteCode,
+  uploadAdminCandidatePhoto, uploadAdminDuoCavalierPhoto, uploadAdminDuoCavalierePhoto
 } from '../../services/api'
 import { useAuth } from '../../context/AuthContext'
 import {
   Settings, Users, LogOut, Crown, Star, Trash2, Plus,
-  RefreshCw, Trophy, Ticket, Copy, Check
+  RefreshCw, Trophy, Ticket, Copy, Check, Camera
 } from 'lucide-react'
 
 type Tab = 'settings' | 'candidates' | 'duos' | 'results'
@@ -175,6 +176,30 @@ export default function AdminDashboard() {
       setAddingDuo(false)
       showMsg('Duo ajouté ✓')
     } catch { showMsg("Erreur lors de l'ajout", false) }
+  }
+
+  const handleUploadCandidatePhoto = async (id: string, file: File) => {
+    try {
+      showMsg('Upload en cours...');
+      const res = await uploadAdminCandidatePhoto(id, file);
+      setCandidates(c => c.map(x => x.id === id ? res : x));
+      showMsg('Photo uploadée ✓');
+    } catch {
+      showMsg("Erreur lors de l'upload", false);
+    }
+  }
+
+  const handleUploadDuoPhoto = async (id: string, file: File, type: 'cavalier' | 'cavaliere') => {
+    try {
+      showMsg('Upload en cours...');
+      let res;
+      if (type === 'cavalier') res = await uploadAdminDuoCavalierPhoto(id, file);
+      else res = await uploadAdminDuoCavalierePhoto(id, file);
+      setDuos(d => d.map(x => x.id === id ? res : x));
+      showMsg('Photo uploadée ✓');
+    } catch {
+      showMsg("Erreur lors de l'upload", false);
+    }
   }
 
   const handleIssueVoteCode = async () => {
@@ -490,10 +515,18 @@ export default function AdminDashboard() {
                 <AdminCard key={c.id}>
                   <div className="p-3 flex items-center gap-3">
                     <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 relative overflow-hidden group"
                       style={{ background: 'linear-gradient(135deg, #C5A059, #D4AF37)', color: '#2C221E' }}
                     >
-                      {c.first_name[0]}
+                      {c.photo_url ? (
+                        <img src={c.photo_url} alt="" className="w-full h-full object-cover" />
+                      ) : c.first_name[0]}
+                      <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                        <Camera size={16} color="white" />
+                        <input type="file" accept="image/*" className="hidden" onChange={e => {
+                          const f = e.target.files?.[0]; if (f) handleUploadCandidatePhoto(c.id, f);
+                        }} />
+                      </label>
                     </div>
                     <div className="flex-1">
                       <div className="font-semibold text-sm" style={{ color: 'rgba(255,255,255,0.88)' }}>
@@ -565,11 +598,25 @@ export default function AdminDashboard() {
               {duos.map(d => (
                 <AdminCard key={d.id}>
                   <div className="p-3 flex items-center gap-3">
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center text-lg flex-shrink-0"
-                      style={{ background: 'linear-gradient(135deg, #C5A059, #D4AF37)' }}
-                    >
-                      💫
+                    <div className="flex -space-x-3 flex-shrink-0">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold relative overflow-hidden group border-2 border-[#2C221E]" style={{ background: 'linear-gradient(135deg, #C5A059, #D4AF37)', color: '#2C221E', zIndex: 2 }}>
+                        {d.cavalier_photo_url ? <img src={d.cavalier_photo_url} alt="" className="w-full h-full object-cover" /> : '👔'}
+                        <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                          <Camera size={14} color="white" />
+                          <input type="file" accept="image/*" className="hidden" onChange={e => {
+                            const f = e.target.files?.[0]; if (f) handleUploadDuoPhoto(d.id, f, 'cavalier');
+                          }} />
+                        </label>
+                      </div>
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold relative overflow-hidden group border-2 border-[#2C221E]" style={{ background: 'linear-gradient(135deg, #D4AF37, #E8C547)', color: '#2C221E', zIndex: 1 }}>
+                        {d.cavaliere_photo_url ? <img src={d.cavaliere_photo_url} alt="" className="w-full h-full object-cover" /> : '👗'}
+                        <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                          <Camera size={14} color="white" />
+                          <input type="file" accept="image/*" className="hidden" onChange={e => {
+                            const f = e.target.files?.[0]; if (f) handleUploadDuoPhoto(d.id, f, 'cavaliere');
+                          }} />
+                        </label>
+                      </div>
                     </div>
                     <div className="flex-1 min-w-0">
                       {d.duo_name && (

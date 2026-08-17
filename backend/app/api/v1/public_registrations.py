@@ -2,10 +2,12 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Form, File, UploadFile
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.storage import upload_photo
+from app.models.enums import CandidateCategory
 from app.schemas.candidate import CandidateCreate, CandidateResponse
 from app.schemas.duo import DuoCreate, DuoResponse
 from app.schemas.system_settings import SystemSettingsResponse
@@ -31,10 +33,27 @@ def read_public_settings(db: Annotated[Session, Depends(get_db)]) -> SystemSetti
 
 @router.post("/candidates", response_model=CandidateResponse, status_code=status.HTTP_201_CREATED)
 def register_candidate(
-    candidate_in: CandidateCreate, db: Annotated[Session, Depends(get_db)]
+    db: Annotated[Session, Depends(get_db)],
+    category: Annotated[CandidateCategory, Form()],
+    first_name: Annotated[str, Form()],
+    last_name: Annotated[str, Form()],
+    photo: Annotated[UploadFile | None, File()] = None,
 ) -> CandidateResponse:
     """Submit a public Roi or Reine application."""
 
+    photo_url = None
+    if photo and photo.size and photo.size > 0:
+        file_bytes = photo.file.read()
+        url = upload_photo(file_bytes, folder="bal_vote/candidates")
+        if url:
+            photo_url = url
+
+    candidate_in = CandidateCreate(
+        category=category,
+        first_name=first_name,
+        last_name=last_name,
+        photo_url=photo_url
+    )
     return create_public_candidate(db, candidate_in)
 
 
@@ -47,9 +66,41 @@ def list_public_candidates(db: Annotated[Session, Depends(get_db)]) -> list[Cand
 
 
 @router.post("/duos", response_model=DuoResponse, status_code=status.HTTP_201_CREATED)
-def register_duo(duo_in: DuoCreate, db: Annotated[Session, Depends(get_db)]) -> DuoResponse:
+def register_duo(
+    db: Annotated[Session, Depends(get_db)],
+    cavalier_first_name: Annotated[str, Form()],
+    cavalier_last_name: Annotated[str, Form()],
+    cavaliere_first_name: Annotated[str, Form()],
+    cavaliere_last_name: Annotated[str, Form()],
+    duo_name: Annotated[str | None, Form()] = None,
+    cavalier_photo: Annotated[UploadFile | None, File()] = None,
+    cavaliere_photo: Annotated[UploadFile | None, File()] = None,
+) -> DuoResponse:
     """Submit a public duo application."""
 
+    cavalier_url = None
+    if cavalier_photo and cavalier_photo.size and cavalier_photo.size > 0:
+        file_bytes = cavalier_photo.file.read()
+        url = upload_photo(file_bytes, folder="bal_vote/duos/cavalier")
+        if url:
+            cavalier_url = url
+
+    cavaliere_url = None
+    if cavaliere_photo and cavaliere_photo.size and cavaliere_photo.size > 0:
+        file_bytes = cavaliere_photo.file.read()
+        url = upload_photo(file_bytes, folder="bal_vote/duos/cavaliere")
+        if url:
+            cavaliere_url = url
+
+    duo_in = DuoCreate(
+        duo_name=duo_name,
+        cavalier_first_name=cavalier_first_name,
+        cavalier_last_name=cavalier_last_name,
+        cavalier_photo_url=cavalier_url,
+        cavaliere_first_name=cavaliere_first_name,
+        cavaliere_last_name=cavaliere_last_name,
+        cavaliere_photo_url=cavaliere_url
+    )
     return create_public_duo(db, duo_in)
 
 

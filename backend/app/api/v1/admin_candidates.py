@@ -3,11 +3,12 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status, UploadFile, File
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_admin
 from app.core.database import get_db
+from app.core.storage import upload_photo
 from app.models import CandidateCategory
 from app.schemas.candidate import CandidateCreate, CandidateResponse, CandidateUpdate
 from app.services.candidate_service import (
@@ -72,3 +73,26 @@ def remove_candidate(candidate_id: uuid.UUID, db: Annotated[Session, Depends(get
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidate not found")
     delete_candidate(db, candidate)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/{candidate_id}/photo", response_model=CandidateResponse)
+def upload_candidate_photo(
+    candidate_id: uuid.UUID,
+    file: UploadFile,
+    db: Annotated[Session, Depends(get_db)]
+) -> CandidateResponse:
+    """Upload a photo for a candidate."""
+
+    candidate = get_candidate(db, candidate_id)
+    if candidate is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidate not found")
+        
+    file_bytes = file.file.read()
+    if not file_bytes:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Empty file")
+        
+    url = upload_photo(file_bytes, folder="bal_vote/candidates")
+    if not url:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to upload photo")
+        
+    return update_candidate(db, candidate, CandidateUpdate(photo_url=url))

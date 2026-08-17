@@ -9,10 +9,15 @@ type Mode = 'ROI' | 'REINE' | 'DUO'
 export default function Register() {
   const [mode, setMode] = useState<Mode>('ROI')
   const [settings, setSettings] = useState<SystemSettings | null>(null)
-  const [form, setForm] = useState({
-    first_name: '', last_name: '',
-    cavalier_first_name: '', cavalier_last_name: '',
-    cavaliere_first_name: '', cavaliere_last_name: '',
+  const [form, setForm] = useState<{
+    first_name: string; last_name: string; photo: File | null;
+    cavalier_first_name: string; cavalier_last_name: string; cavalier_photo: File | null;
+    cavaliere_first_name: string; cavaliere_last_name: string; cavaliere_photo: File | null;
+    duo_name: string;
+  }>({
+    first_name: '', last_name: '', photo: null,
+    cavalier_first_name: '', cavalier_last_name: '', cavalier_photo: null,
+    cavaliere_first_name: '', cavaliere_last_name: '', cavaliere_photo: null,
     duo_name: '',
   })
   const [loading, setLoading] = useState(false)
@@ -26,7 +31,7 @@ export default function Register() {
       .finally(() => setSettingsLoading(false))
   }, [])
 
-  const update = (field: string, value: string) =>
+  const update = (field: string, value: any) =>
     setForm(f => ({ ...f, [field]: value }))
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,24 +41,33 @@ export default function Register() {
     setError('')
 
     try {
+      const formData = new FormData()
       if (mode === 'DUO') {
-        await registerDuo({
-          duo_name: form.duo_name || undefined,
-          cavalier_first_name: form.cavalier_first_name,
-          cavalier_last_name: form.cavalier_last_name,
-          cavaliere_first_name: form.cavaliere_first_name,
-          cavaliere_last_name: form.cavaliere_last_name,
-        })
+        if (form.duo_name) formData.append('duo_name', form.duo_name)
+        formData.append('cavalier_first_name', form.cavalier_first_name)
+        formData.append('cavalier_last_name', form.cavalier_last_name)
+        formData.append('cavaliere_first_name', form.cavaliere_first_name)
+        formData.append('cavaliere_last_name', form.cavaliere_last_name)
+        if (form.cavalier_photo) formData.append('cavalier_photo', form.cavalier_photo)
+        if (form.cavaliere_photo) formData.append('cavaliere_photo', form.cavaliere_photo)
+        
+        await registerDuo(formData)
         setSuccess('Votre duo a été inscrit avec succès ! 🎉')
       } else {
-        await registerCandidate({
-          category: mode,
-          first_name: form.first_name,
-          last_name: form.last_name,
-        })
+        formData.append('category', mode)
+        formData.append('first_name', form.first_name)
+        formData.append('last_name', form.last_name)
+        if (form.photo) formData.append('photo', form.photo)
+
+        await registerCandidate(formData)
         setSuccess(`Votre candidature en tant que ${mode === 'ROI' ? 'Roi' : 'Reine'} a été enregistrée ! 🎉`)
       }
-      setForm({ first_name: '', last_name: '', cavalier_first_name: '', cavalier_last_name: '', cavaliere_first_name: '', cavaliere_last_name: '', duo_name: '' })
+      setForm({
+        first_name: '', last_name: '', photo: null,
+        cavalier_first_name: '', cavalier_last_name: '', cavalier_photo: null,
+        cavaliere_first_name: '', cavaliere_last_name: '', cavaliere_photo: null,
+        duo_name: ''
+      })
     } catch (err: any) {
       const msg = err?.response?.data?.detail
       if (typeof msg === 'string') {
@@ -158,6 +172,19 @@ export default function Register() {
                   required
                 />
               </div>
+              <div>
+                <label className="block text-xs font-semibold tracking-widest uppercase text-[#B08233] mb-2">Photo (optionnel)</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="input-elegant text-xs"
+                  onChange={e => {
+                    const file = e.target.files?.[0];
+                    if (file) update('photo', file);
+                  }}
+                  style={{ paddingTop: '0.6rem', paddingBottom: '0.6rem' }}
+                />
+              </div>
             </>
           ) : (
             <>
@@ -177,6 +204,12 @@ export default function Register() {
                     onChange={e => update('cavalier_first_name', e.target.value)} required />
                   <input className="input-elegant" placeholder="Nom" value={form.cavalier_last_name}
                     onChange={e => update('cavalier_last_name', e.target.value)} required />
+                  <div>
+                    <label className="block text-[10px] font-semibold tracking-widest uppercase text-[#B08233] mb-1">Photo (optionnel)</label>
+                    <input type="file" accept="image/*" className="input-elegant text-xs"
+                      onChange={e => { const file = e.target.files?.[0]; if (file) update('cavalier_photo', file); }}
+                      style={{ paddingTop: '0.4rem', paddingBottom: '0.4rem' }} />
+                  </div>
                 </div>
               </div>
               <div className="p-4 rounded-xl bg-[#F9F0FF] border border-[#C5A059]/40">
@@ -186,6 +219,12 @@ export default function Register() {
                     onChange={e => update('cavaliere_first_name', e.target.value)} required />
                   <input className="input-elegant" placeholder="Nom" value={form.cavaliere_last_name}
                     onChange={e => update('cavaliere_last_name', e.target.value)} required />
+                  <div>
+                    <label className="block text-[10px] font-semibold tracking-widest uppercase text-[#B08233] mb-1">Photo (optionnel)</label>
+                    <input type="file" accept="image/*" className="input-elegant text-xs"
+                      onChange={e => { const file = e.target.files?.[0]; if (file) update('cavaliere_photo', file); }}
+                      style={{ paddingTop: '0.4rem', paddingBottom: '0.4rem' }} />
+                  </div>
                 </div>
               </div>
             </>
