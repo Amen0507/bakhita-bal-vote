@@ -188,8 +188,23 @@ export default function Vote() {
                     }`}
                   >
                     {d.duo_name && <div className="font-bold text-[#B08233] mb-1" style={{ fontFamily: 'var(--font-serif)' }}>{d.duo_name}</div>}
-                    <div className="text-sm text-[#2C221E]">
-                      {d.cavalier_first_name} {d.cavalier_last_name} & {d.cavaliere_first_name} {d.cavaliere_last_name}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-[#F0E8CC] text-center text-lg font-bold leading-[3.5rem] text-[#B08233]">
+                          {d.cavalier_photo_url ? (
+                            <img src={d.cavalier_photo_url} alt={`${d.cavalier_first_name} ${d.cavalier_last_name}`} className="h-full w-full object-cover" />
+                          ) : d.cavalier_first_name[0]}
+                        </div>
+                        <span className="text-sm text-[#2C221E]">{d.cavalier_first_name} {d.cavalier_last_name}</span>
+                      </div>
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-[#F0E8CC] text-center text-lg font-bold leading-[3.5rem] text-[#B08233]">
+                          {d.cavaliere_photo_url ? (
+                            <img src={d.cavaliere_photo_url} alt={`${d.cavaliere_first_name} ${d.cavaliere_last_name}`} className="h-full w-full object-cover" />
+                          ) : d.cavaliere_first_name[0]}
+                        </div>
+                        <span className="text-sm text-[#2C221E]">{d.cavaliere_first_name} {d.cavaliere_last_name}</span>
+                      </div>
                     </div>
                     {isSelected && <div className="flex justify-end mt-1"><CheckCircle size={16} className="text-[#D4AF37]" /></div>}
                   </button>
@@ -202,20 +217,29 @@ export default function Vote() {
                   <button
                     key={c.id}
                     onClick={() => setSelections(current => ({ ...current, [category]: c.id }))}
-                    className={`w-full flex items-center gap-4 p-4 rounded-xl text-left transition-all border-2 ${
+                    className={`group w-full flex items-center gap-4 p-3 rounded-xl text-left transition-all border-2 ${
                       isSelected
                         ? 'border-[#D4AF37] bg-[#FDF8EC] shadow-md'
                         : 'border-[#E8E0CC] bg-white hover:border-[#D4AF37]/50'
                     }`}
                   >
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0 overflow-hidden ${
-                      isSelected ? 'bg-gradient-to-br from-[#D4AF37] to-[#C5A059] text-white' : 'bg-[#F0E8CC] text-[#B08233]'
+                    <div className={`relative h-24 w-20 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-[#D4AF37] to-[#5C4316] sm:h-28 sm:w-24 ${
+                      isSelected ? 'ring-2 ring-[#D4AF37] ring-offset-2 ring-offset-[#FDF8EC]' : ''
                     }`}>
-                      {c.photo_url ? <img src={c.photo_url} alt={`${c.first_name} ${c.last_name}`} className="w-full h-full object-cover" /> : c.first_name[0]}
+                      {c.photo_url ? (
+                        <img
+                          src={c.photo_url}
+                          alt={`${c.first_name} ${c.last_name}`}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <span className="flex h-full items-center justify-center font-serif text-4xl font-bold text-white/90">{c.first_name[0]}</span>
+                      )}
+                      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#1D1512]/60 to-transparent" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-semibold text-[#2C221E]">{c.first_name} {c.last_name}</div>
-                      <div className="text-xs text-[#B08233] tracking-widest">Candidat N° {i + 1}</div>
+                      <div className="font-bold text-lg text-[#2C221E]" style={{ fontFamily: 'var(--font-serif)' }}>{c.first_name} {c.last_name}</div>
+                      <div className="mt-1 text-xs text-[#B08233] tracking-widest">Candidat N° {i + 1}</div>
                     </div>
                     {isSelected && <CheckCircle size={20} className="text-[#D4AF37] flex-shrink-0" />}
                   </button>

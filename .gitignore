@@ -1,1 +1,6 @@
-node_modules/\n__pycache__/\n.env\n*.db\n.DS_Store
+node_modules/
+__pycache__/
+.env
+*.db
+backend/media/
+.DS_Store

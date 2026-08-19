@@ -2,6 +2,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import fastapi
 import app.api.deps
 
@@ -37,6 +38,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Used when Cloudinary is not configured, primarily during local development.
+settings.media_root.mkdir(parents=True, exist_ok=True)
+app.mount("/media", StaticFiles(directory=settings.media_root), name="media")
+
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["authentication"])
 app.include_router(admin_settings_router, prefix="/api/v1/admin/settings", tags=["admin settings"])
 app.include_router(admin_candidates_router, prefix="/api/v1/admin/candidates", tags=["admin candidates"])
@@ -59,4 +64,3 @@ def health() -> dict[str, str]:
     """Return the application health status."""
 
     return {"status": "ok"}
-

@@ -2,11 +2,11 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status, Form, File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Request, status, Form, File, UploadFile
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.storage import upload_photo
+from app.core.storage import PhotoUploadError, upload_photo
 from app.models.enums import CandidateCategory
 from app.schemas.candidate import CandidateCreate, CandidateResponse
 from app.schemas.duo import DuoCreate, DuoResponse
@@ -34,6 +34,7 @@ def read_public_settings(db: Annotated[Session, Depends(get_db)]) -> SystemSetti
 @router.post("/candidates", response_model=CandidateResponse, status_code=status.HTTP_201_CREATED)
 def register_candidate(
     db: Annotated[Session, Depends(get_db)],
+    request: Request,
     category: Annotated[CandidateCategory, Form()],
     first_name: Annotated[str, Form()],
     last_name: Annotated[str, Form()],
@@ -44,9 +45,10 @@ def register_candidate(
     photo_url = None
     if photo and photo.size and photo.size > 0:
         file_bytes = photo.file.read()
-        url = upload_photo(file_bytes, folder="bal_vote/candidates")
-        if url:
-            photo_url = url
+        try:
+            photo_url = upload_photo(file_bytes, "bal_vote/candidates", str(request.base_url))
+        except PhotoUploadError as error:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)) from error
 
     candidate_in = CandidateCreate(
         category=category,
@@ -68,6 +70,7 @@ def list_public_candidates(db: Annotated[Session, Depends(get_db)]) -> list[Cand
 @router.post("/duos", response_model=DuoResponse, status_code=status.HTTP_201_CREATED)
 def register_duo(
     db: Annotated[Session, Depends(get_db)],
+    request: Request,
     cavalier_first_name: Annotated[str, Form()],
     cavalier_last_name: Annotated[str, Form()],
     cavaliere_first_name: Annotated[str, Form()],
@@ -81,16 +84,18 @@ def register_duo(
     cavalier_url = None
     if cavalier_photo and cavalier_photo.size and cavalier_photo.size > 0:
         file_bytes = cavalier_photo.file.read()
-        url = upload_photo(file_bytes, folder="bal_vote/duos/cavalier")
-        if url:
-            cavalier_url = url
+        try:
+            cavalier_url = upload_photo(file_bytes, "bal_vote/duos/cavalier", str(request.base_url))
+        except PhotoUploadError as error:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)) from error
 
     cavaliere_url = None
     if cavaliere_photo and cavaliere_photo.size and cavaliere_photo.size > 0:
         file_bytes = cavaliere_photo.file.read()
-        url = upload_photo(file_bytes, folder="bal_vote/duos/cavaliere")
-        if url:
-            cavaliere_url = url
+        try:
+            cavaliere_url = upload_photo(file_bytes, "bal_vote/duos/cavaliere", str(request.base_url))
+        except PhotoUploadError as error:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)) from error
 
     duo_in = DuoCreate(
         duo_name=duo_name,
