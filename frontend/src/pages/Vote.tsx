@@ -187,15 +187,15 @@ export default function Vote() {
                         : 'border-[#E8E0CC] bg-white hover:border-[#D4AF37]/50'
                     }`}
                   >
-                    {d.duo_name && <div className="font-bold text-[#B08233] mb-1" style={{ fontFamily: 'var(--font-serif)' }}>{d.duo_name}</div>}
-                    <div className="grid grid-cols-2 gap-3">
+                    {d.duo_name && <div className="mb-3 break-words font-bold text-[#B08233]" style={{ fontFamily: 'var(--font-serif)' }}>{d.duo_name}</div>}
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <div className="flex min-w-0 items-center gap-3">
                         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-[#F0E8CC] text-center text-lg font-bold leading-[3.5rem] text-[#B08233]">
                           {d.cavalier_photo_url ? (
                             <img src={d.cavalier_photo_url} alt={`${d.cavalier_first_name} ${d.cavalier_last_name}`} className="h-full w-full object-cover" />
                           ) : d.cavalier_first_name[0]}
                         </div>
-                        <span className="text-sm text-[#2C221E]">{d.cavalier_first_name} {d.cavalier_last_name}</span>
+                        <span className="min-w-0 break-words text-sm leading-snug text-[#2C221E]">{d.cavalier_first_name} {d.cavalier_last_name}</span>
                       </div>
                       <div className="flex min-w-0 items-center gap-3">
                         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full bg-[#F0E8CC] text-center text-lg font-bold leading-[3.5rem] text-[#B08233]">
@@ -203,7 +203,7 @@ export default function Vote() {
                             <img src={d.cavaliere_photo_url} alt={`${d.cavaliere_first_name} ${d.cavaliere_last_name}`} className="h-full w-full object-cover" />
                           ) : d.cavaliere_first_name[0]}
                         </div>
-                        <span className="text-sm text-[#2C221E]">{d.cavaliere_first_name} {d.cavaliere_last_name}</span>
+                        <span className="min-w-0 break-words text-sm leading-snug text-[#2C221E]">{d.cavaliere_first_name} {d.cavaliere_last_name}</span>
                       </div>
                     </div>
                     {isSelected && <div className="flex justify-end mt-1"><CheckCircle size={16} className="text-[#D4AF37]" /></div>}
